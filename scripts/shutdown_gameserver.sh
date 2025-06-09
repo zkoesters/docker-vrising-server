@@ -1,4 +1,8 @@
 #!/bin/bash
+# shellcheck source=scripts/helper_functions.sh
+source "${SCRIPTSDIR}/helper_functions.sh"
+
+DiscordMessage "Shutdown" "${DISCORD_PRE_SHUTDOWN_MESSAGE}" "in-progress" "${DISCORD_PRE_SHUTDOWN_MESSAGE_ENABLED}" "${DISCORD_PRE_SHUTDOWN_MESSAGE_URL}"
 
 # Why are we still using this over RCON?
 # Because the min wait time for the RCON shutdown command is 1 min
@@ -15,5 +19,6 @@ wine cmd.exe /C "taskkill /pid $(( 0x$WinHexPID ))"
 # so we wait for it
 wineserver -w
 
-exit
+DiscordMessage "Stop" "${DISCORD_POST_SHUTDOWN_MESSAGE}" "failure" "${DISCORD_POST_SHUTDOWN_MESSAGE_ENABLED}" "${DISCORD_POST_SHUTDOWN_MESSAGE_URL}"
+exit 0
 # Yeepii, we gracefully shutdown the gameserver! \'-'/

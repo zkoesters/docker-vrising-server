@@ -1,11 +1,11 @@
 services:
   vrising:
-    image: diyagi/vrising-server-docker:latest
+    image: zkoesters/vrising:latest
     restart: unless-stopped # Required for the restarts to work
     stop_grace_period: 15s # Might need to increase with longer saves
     ports:
-      - 9876:9876/udp
-      - 9877:9877/udp
+      - "9876:9876/udp"
+      - "9877:9877/udp"
     environment:
       TZ: "America/Los_Angeles"
       PUID: 1001

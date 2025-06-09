@@ -93,6 +93,7 @@ fi
 
 
 LogAction "Starting Server"
+DiscordMessage "Start" "${DISCORD_PRE_START_MESSAGE}" "success" "${DISCORD_PRE_START_MESSAGE_ENABLED}" "${DISCORD_PRE_START_MESSAGE_URL}"
 
 LogInfo "Starting Xvfb"
 Xvfb :0 -screen 0 1024x768x16 &

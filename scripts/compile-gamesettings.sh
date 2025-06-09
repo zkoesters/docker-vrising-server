@@ -9,35 +9,355 @@ mkdir -p "$gameconfig_dir" || exit
 
 # If file exists then check if it is writable
 if [ -f "$gameconfig_file" ]; then
-    if ! isWritable "$gameconfig_file"; then
-        LogError "Unable to create $gameconfig_file"
-        exit 1
-    fi
-# If file does not exist then check if the directory is writable
-elif ! isWritable "$gameconfig_dir"; then
-    # Exiting since the file does not exist and the directory is not writable.
+  if ! isWritable "$gameconfig_file"; then
     LogError "Unable to create $gameconfig_file"
     exit 1
+  fi
+# If file does not exist then check if the directory is writable
+elif ! isWritable "$gameconfig_dir"; then
+  # Exiting since the file does not exist and the directory is not writable.
+  LogError "Unable to create $gameconfig_file"
+  exit 1
 fi
 
 LogAction "Compiling ServerGameSettings.json"
 
-export GAME_DIFFICULTY=${GAME_DIFFICULTY:-"Normal"}
-export GAMEMODE_TYPE=${GAMEMODE_TYPE:-"PvP"}
-export CLAN_SIZE=${CLAN_SIZE:-4}
+export GS_GAME_DIFFICULTY=${GS_GAME_DIFFICULTY:-"Normal"}
+export GS_GAME_MODE_TYPE=${GS_GAME_MODE_TYPE:-"PvP"}
+export GS_CASTLE_DAMAGE_MODE=${GS_CASTLE_DAMAGE_MODE:-"Never"}
+export GS_SIEGE_WEAPON_HEALTH=${GS_SIEGE_WEAPON_HEALTH:-"Normal"}
+export GS_PLAYER_DAMAGE_MODE=${GS_PLAYER_DAMAGE_MODE:-"Always"}
+export GS_CASTLE_HEART_DAMAGE_MODE=${GS_CASTLE_HEART_DAMAGE_MODE:-"CanBeDestroyedByPlayers"}
+export GS_PVP_PROTECTION_MODE=${GS_PVP_PROTECTION_MODE:-"Medium"}
+export GS_DEATH_CONTAINER_PERMISSION=${GS_DEATH_CONTAINER_PERMISSION:-"Anyone"}
+export GS_RELIC_SPAWN_TYPE=${GS_RELIC_SPAWN_TYPE:-"Unique"}
+export GS_SOUL_SHARD___DURABILITY_LOSS_RATE=${GS_SOUL_SHARD___DURABILITY_LOSS_RATE:-1.0}
+export GS_CAN_LOOT_ENEMY_CONTAINERS=${GS_CAN_LOOT_ENEMY_CONTAINERS:-true}
+export GS_BLOOD_BOUND_EQUIPMENT=${GS_BLOOD_BOUND_EQUIPMENT:-true}
+export GS_TELEPORT_BOUND_ITEMS=${GS_TELEPORT_BOUND_ITEMS:-true}
+export GS_BAT_BOUND_ITEMS=${GS_BAT_BOUND_ITEMS:-false}
+export GS_BAT_BOUND_SHARDS=${GS_BAT_BOUND_SHARDS:-false}
+export GS_ALLOW_GLOBAL_CHAT=${GS_ALLOW_GLOBAL_CHAT:-true}
+export GS_ALL_WAYPOINTS_UNLOCKED=${GS_ALL_WAYPOINTS_UNLOCKED:-false}
+export GS_FREE_CASTLE_RAID=${GS_FREE_CASTLE_RAID:-false}
+export GS_FREE_CASTLE_CLAIM=${GS_FREE_CASTLE_CLAIM:-false}
+export GS_FREE_CASTLE_DESTROY=${GS_FREE_CASTLE_DESTROY:-false}
+export GS_INACTIVITY_KILL_ENABLED=${GS_INACTIVITY_KILL_ENABLED:-true}
+export GS_INACTIVITY_KILL_TIME_MIN=${GS_INACTIVITY_KILL_TIME_MIN:-3600}
+export GS_INACTIVITY_KILL_TIME_MAX=${GS_INACTIVITY_KILL_TIME_MAX:-604800}
+export GS_INACTIVITY_KILL_SAFE_TIME_ADDITION=${GS_INACTIVITY_KILL_SAFE_TIME_ADDITION:-172800}
+export GS_INACTIVITY_KILL_TIMER_MAX_ITEM_LEVEL=${GS_INACTIVITY_KILL_TIMER_MAX_ITEM_LEVEL:-84}
+export GS_STARTING_PROGRESSION_LEVEL=${GS_STARTING_PROGRESSION_LEVEL:-0}
+export GS_DISABLE_DISCONNECTED_DEAD_ENABLED=${GS_DISABLE_DISCONNECTED_DEAD_ENABLED:-true}
+export GS_DISABLE_DISCONNECTED_DEAD_TIMER=${GS_DISABLE_DISCONNECTED_DEAD_TIMER:-60}
+export GS_DISCONNECTED_SUN_IMMUNITY_TIME=${GS_DISCONNECTED_SUN_IMMUNITY_TIME:-300.0}
+export GS_INVENTORY_STACKS_MODIFIER=${GS_INVENTORY_STACKS_MODIFIER:-1.0}
+export GS_DROP_TABLE_MODIFIER___GENERAL=${GS_DROP_TABLE_MODIFIER___GENERAL:-1.0}
+export GS_DROP_TABLE_MODIFIER___STYGIAN_SHARDS=${GS_DROP_TABLE_MODIFIER___STYGIAN_SHARDS:-1.0}
+export GS_DROP_TABLE_MODIFIER___MISSIONS=${GS_DROP_TABLE_MODIFIER___MISSIONS:-1.0}
+export GS_MATERIAL_YIELD_MODIFIER___GLOBAL=${GS_MATERIAL_YIELD_MODIFIER___GLOBAL:-1.0}
+export GS_BLOOD_ESSENCE_YIELD_MODIFIER=${GS_BLOOD_ESSENCE_YIELD_MODIFIER:-1.0}
+export GS_JOURNAL_V___BLOOD_SOURCE_UNIT_MAX_DISTANCE=${GS_JOURNAL_V___BLOOD_SOURCE_UNIT_MAX_DISTANCE:-25.0}
+export GS_PVP_VAMPIRE_RESPAWN_MODIFIER=${GS_PVP_VAMPIRE_RESPAWN_MODIFIER:-1.0}
+export GS_CASTLE_MINIMUM_DISTANCE_IN_FLOORS=${GS_CASTLE_MINIMUM_DISTANCE_IN_FLOORS:-2}
+export GS_CLAN_SIZE=${GS_CLAN_SIZE:-4}
+export GS_BLOOD_DRAIN_MODIFIER=${GS_BLOOD_DRAIN_MODIFIER:-1.0}
+export GS_DURABILITY_DRAIN_MODIFIER=${GS_DURABILITY_DRAIN_MODIFIER:-1.0}
+export GS_GARLIC_AREA_STRENGTH_MODIFIER=${GS_GARLIC_AREA_STRENGTH_MODIFIER:-1.0}
+export GS_HOLY_AREA_STRENGTH_MODIFIER=${GS_HOLY_AREA_STRENGTH_MODIFIER:-1.0}
+export GS_SILVER_STRENGTH_MODIFIER=${GS_SILVER_STRENGTH_MODIFIER:-1.0}
+export GS_SUN_DAMAGE_MODIFIER=${GS_SUN_DAMAGE_MODIFIER:-1.0}
+export GS_CASTLE_DECAY_RATE_MODIFIER=${GS_CASTLE_DECAY_RATE_MODIFIER:-1.0}
+export GS_CASTLE_BLOOD_ESSENCE_DRAIN_MODIFIER=${GS_CASTLE_BLOOD_ESSENCE_DRAIN_MODIFIER:-1.0}
+export GS_CASTLE_SIEGE_TIMER=${GS_CASTLE_SIEGE_TIMER:-420.0}
+export GS_CASTLE_UNDER_ATTACK_TIMER=${GS_CASTLE_UNDER_ATTACK_TIMER:-60.0}
+export GS_CASTLE_RAID_TIMER=${GS_CASTLE_RAID_TIMER:-600.0}
+export GS_CASTLE_RAID_PROTECTION_TIME=${GS_CASTLE_RAID_PROTECTION_TIME:-1800.0}
+export GS_CASTLE_EXPOSED_FREE_CLAIM_TIMER=${GS_CASTLE_EXPOSED_FREE_CLAIM_TIMER:-300.0}
+export GS_CASTLE_RELOCATION_COOLDOWN=${GS_CASTLE_RELOCATION_COOLDOWN:-10800.0}
+export GS_CASTLE_RELOCATION_ENABLED=${GS_CASTLE_RELOCATION_ENABLED:-true}
+export GS_ANNOUNCE_SIEGE_WEAPON_SPAWN=${GS_ANNOUNCE_SIEGE_WEAPON_SPAWN:-true}
+export GS_SHOW_SIEGE_WEAPON_MAP_ICON=${GS_SHOW_SIEGE_WEAPON_MAP_ICON:-false}
+export GS_BUILD_COST_MODIFIER=${GS_BUILD_COST_MODIFIER:-1.0}
+export GS_RECIPE_COST_MODIFIER=${GS_RECIPE_COST_MODIFIER:-1.0}
+export GS_CRAFT_RATE_MODIFIER=${GS_CRAFT_RATE_MODIFIER:-1.0}
+export GS_RESEARCH_COST_MODIFIER=${GS_RESEARCH_COST_MODIFIER:-1.0}
+export GS_REFINEMENT_COST_MODIFIER=${GS_REFINEMENT_COST_MODIFIER:-1.0}
+export GS_REFINEMENT_RATE_MODIFIER=${GS_REFINEMENT_RATE_MODIFIER:-1.0}
+export GS_RESEARCH_TIME_MODIFIER=${GS_RESEARCH_TIME_MODIFIER:-1.0}
+export GS_DISMANTLE_RESOURCE_MODIFIER=${GS_DISMANTLE_RESOURCE_MODIFIER:-1.0}
+export GS_SERVANT_CONVERT_RATE_MODIFIER=${GS_SERVANT_CONVERT_RATE_MODIFIER:-1.0}
+export GS_REPAIR_COST_MODIFIER=${GS_REPAIR_COST_MODIFIER:-1.0}
+export GS_DEATH___DURABILITY_FACTOR_LOSS=${GS_DEATH___DURABILITY_FACTOR_LOSS:-0.125}
+export GS_DEATH___DURABILITY_LOSS_FACTOR_AS_RESOURCES=${GS_DEATH___DURABILITY_LOSS_FACTOR_AS_RESOURCES:-1.0}
+export GS_STARTER_EQUIPMENT_ID=${GS_STARTER_EQUIPMENT_ID:-0}
+export GS_STARTER_RESOURCES_ID=${GS_STARTER_RESOURCES_ID:-0}
+export GS_GAME_TIME_MODIFIERS__DAY_DURATION_IN_SECONDS=${GS_GAME_TIME_MODIFIERS__DAY_DURATION_IN_SECONDS:-1080.0}
+export GS_GAME_TIME_MODIFIERS__DAY_START_HOUR=${GS_GAME_TIME_MODIFIERS__DAY_START_HOUR:-9}
+export GS_GAME_TIME_MODIFIERS__DAY_START_MINUTE=${GS_GAME_TIME_MODIFIERS__DAY_START_MINUTE:-0}
+export GS_GAME_TIME_MODIFIERS__DAY_END_HOUR=${GS_GAME_TIME_MODIFIERS__DAY_END_HOUR:-17}
+export GS_GAME_TIME_MODIFIERS__DAY_END_MINUTE=${GS_GAME_TIME_MODIFIERS__DAY_END_MINUTE:-0}
+export GS_GAME_TIME_MODIFIERS__BLOOD_MOON_FREQUENCY___MIN=${GS_GAME_TIME_MODIFIERS__BLOOD_MOON_FREQUENCY___MIN:-10}
+export GS_GAME_TIME_MODIFIERS__BLOOD_MOON_FREQUENCY___MAX=${GS_GAME_TIME_MODIFIERS__BLOOD_MOON_FREQUENCY___MAX:-18}
+export GS_GAME_TIME_MODIFIERS__BLOOD_MOON_BUFF=${GS_GAME_TIME_MODIFIERS__BLOOD_MOON_BUFF:-0.2}
+export GS_VAMPIRE_STAT_MODIFIERS__MAX_HEALTH_MODIFIER=${GS_VAMPIRE_STAT_MODIFIERS__MAX_HEALTH_MODIFIER:-1.0}
+export GS_VAMPIRE_STAT_MODIFIERS__PHYSICAL_POWER_MODIFIER=${GS_VAMPIRE_STAT_MODIFIERS__PHYSICAL_POWER_MODIFIER:-1.0}
+export GS_VAMPIRE_STAT_MODIFIERS__SPELL_POWER_MODIFIER=${GS_VAMPIRE_STAT_MODIFIERS__SPELL_POWER_MODIFIER:-1.0}
+export GS_VAMPIRE_STAT_MODIFIERS__RESOURCE_POWER_MODIFIER=${GS_VAMPIRE_STAT_MODIFIERS__RESOURCE_POWER_MODIFIER:-1.0}
+export GS_VAMPIRE_STAT_MODIFIERS__SIEGE_POWER_MODIFIER=${GS_VAMPIRE_STAT_MODIFIERS__SIEGE_POWER_MODIFIER:-1.0}
+export GS_VAMPIRE_STAT_MODIFIERS__DAMAGE_RECEIVED_MODIFIER=${GS_VAMPIRE_STAT_MODIFIERS__DAMAGE_RECEIVED_MODIFIER:-1.0}
+export GS_VAMPIRE_STAT_MODIFIERS__REVIVE_CANCEL_DELAY=${GS_VAMPIRE_STAT_MODIFIERS__REVIVE_CANCEL_DELAY:-5.0}
+export GS_UNIT_STAT_MODIFIERS___GLOBAL__MAX_HEALTH_MODIFIER=${GS_UNIT_STAT_MODIFIERS___GLOBAL__MAX_HEALTH_MODIFIER:-1.0}
+export GS_UNIT_STAT_MODIFIERS___GLOBAL__POWER_MODIFIER=${GS_UNIT_STAT_MODIFIERS___GLOBAL__POWER_MODIFIER:-1.0}
+export GS_UNIT_STAT_MODIFIERS___GLOBAL__LEVEL_INCREASE=${GS_UNIT_STAT_MODIFIERS___GLOBAL__LEVEL_INCREASE:-0}
+export GS_UNIT_STAT_MODIFIERS___V_BLOOD__MAX_HEALTH_MODIFIER=${GS_UNIT_STAT_MODIFIERS___V_BLOOD__MAX_HEALTH_MODIFIER:-1.0}
+export GS_UNIT_STAT_MODIFIERS___V_BLOOD__POWER_MODIFIER=${GS_UNIT_STAT_MODIFIERS___V_BLOOD__POWER_MODIFIER:-1.0}
+export GS_UNIT_STAT_MODIFIERS___V_BLOOD__LEVEL_INCREASE=${GS_UNIT_STAT_MODIFIERS___V_BLOOD__LEVEL_INCREASE:-0}
+export GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__MAX_HEALTH_MODIFIER=${GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__MAX_HEALTH_MODIFIER:-1.0}
+export GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__RESOURCE_YIELD_MODIFIER=${GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__RESOURCE_YIELD_MODIFIER:-1.0}
+export GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__PHYSICAL_POWER_MODIFIER=${GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__PHYSICAL_POWER_MODIFIER:-1.0}
+export GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__SPELL_POWER_MODIFIER=${GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__SPELL_POWER_MODIFIER:-1.0}
+export GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__SIEGE_POWER_MODIFIER=${GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__SIEGE_POWER_MODIFIER:-1.0}
+export GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__MOVEMENT_SPEED_MODIFIER=${GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__MOVEMENT_SPEED_MODIFIER:-1.0}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__TICK_PERIOD=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__TICK_PERIOD:-5.0}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__SAFETY_BOX_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__SAFETY_BOX_LIMIT:-1}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__EYE_STRUCTURES_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__EYE_STRUCTURES_LIMIT:-1}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__TOMB_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__TOMB_LIMIT:-12}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__VERMIN_NEST_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__VERMIN_NEST_LIMIT:-4}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__PRISON_CELL_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__PRISON_CELL_LIMIT:-24}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__CASTLE_HEART_LIMIT_TYPE=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__CASTLE_HEART_LIMIT_TYPE:-"User"}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__CASTLE_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__CASTLE_LIMIT:-2}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__NETHER_GATE_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__NETHER_GATE_LIMIT:-1}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__THRONE_OF_DARKNESS_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__THRONE_OF_DARKNESS_LIMIT:-1}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__ARENA_STATION_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__ARENA_STATION_LIMIT:-5}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__ROUTING_STATION_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__ROUTING_STATION_LIMIT:-10}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__FLOOR_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__FLOOR_LIMIT:-50}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__SERVANT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__SERVANT_LIMIT:-1}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__HEIGHT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__HEIGHT_LIMIT:-3}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__FLOOR_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__FLOOR_LIMIT:-140}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__SERVANT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__SERVANT_LIMIT:-3}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__HEIGHT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__HEIGHT_LIMIT:-3}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__FLOOR_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__FLOOR_LIMIT:-240}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__SERVANT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__SERVANT_LIMIT:-5}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__HEIGHT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__HEIGHT_LIMIT:-3}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__FLOOR_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__FLOOR_LIMIT:-360}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__SERVANT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__SERVANT_LIMIT:-7}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__HEIGHT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__HEIGHT_LIMIT:-3}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__FLOOR_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__FLOOR_LIMIT:-550}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__SERVANT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__SERVANT_LIMIT:-8}
+export GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__HEIGHT_LIMIT=${GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__HEIGHT_LIMIT:-3}
+export GS_PLAYER_INTERACTION_SETTINGS__TIME_ZONE=${GS_PLAYER_INTERACTION_SETTINGS__TIME_ZONE:-"Local"}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__START_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__START_HOUR:-20}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__START_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__START_MINUTE:-0}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__END_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__END_HOUR:-22}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__END_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__END_MINUTE:-0}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__START_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__START_HOUR:-20}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__START_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__START_MINUTE:-0}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__END_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__END_HOUR:-22}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__END_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__END_MINUTE:-0}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__START_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__START_HOUR:-20}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__START_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__START_MINUTE:-0}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__END_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__END_HOUR:-22}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__END_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__END_MINUTE:-0}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__START_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__START_HOUR:-20}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__START_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__START_MINUTE:-0}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__END_HOUR=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__END_HOUR:-22}
+export GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__END_MINUTE=${GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__END_MINUTE:-0}
+export GS_TRADER_MODIFIERS__STOCK_MODIFIER=${GS_TRADER_MODIFIERS__STOCK_MODIFIER:-1.0}
+export GS_TRADER_MODIFIERS__PRICE_MODIFIER=${GS_TRADER_MODIFIERS__PRICE_MODIFIER:-1.0}
+export GS_TRADER_MODIFIERS__RESTOCK_TIMER_MODIFIER=${GS_TRADER_MODIFIERS__RESTOCK_TIMER_MODIFIER:-1.0}
+export GS_WAR_EVENT_GAME_SETTINGS__INTERVAL=${GS_WAR_EVENT_GAME_SETTINGS__INTERVAL:-1}
+export GS_WAR_EVENT_GAME_SETTINGS__MAJOR_DURATION=${GS_WAR_EVENT_GAME_SETTINGS__MAJOR_DURATION:-1}
+export GS_WAR_EVENT_GAME_SETTINGS__MINOR_DURATION=${GS_WAR_EVENT_GAME_SETTINGS__MINOR_DURATION:-1}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__START_HOUR=${GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__START_HOUR:-0}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__START_MINUTE=${GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__START_MINUTE:-0}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__END_HOUR=${GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__END_HOUR:-23}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__END_MINUTE=${GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__END_MINUTE:-59}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__START_HOUR=${GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__START_HOUR:-0}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__START_MINUTE=${GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__START_MINUTE:-0}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__END_HOUR=${GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__END_HOUR:-23}
+export GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__END_MINUTE=${GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__END_MINUTE:-59}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS1__POINTS_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS1__POINTS_MODIFIER:-1.0}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS1__DROP_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS1__DROP_MODIFIER:-1.0}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS2__POINTS_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS2__POINTS_MODIFIER:-0.5}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS2__DROP_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS2__DROP_MODIFIER:-0.5}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS3__POINTS_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS3__POINTS_MODIFIER:-0.25}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS3__DROP_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS3__DROP_MODIFIER:-0.25}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS4__POINTS_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS4__POINTS_MODIFIER:-0.25}
+export GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS4__DROP_MODIFIER=${GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS4__DROP_MODIFIER:-0.25}
 
-jq '.GameDifficulty = env.GAME_DIFFICULTY |
-    .GameModeType = env.GAMEMODE_TYPE |
-    .ClanSize = (env.CLAN_SIZE | tonumber)' \
-  < "${STEAMAPPSERVER}/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json" \
-  > "${gameconfig_file}"
+jq '.GameDifficulty                                             = env.GS_GAME_DIFFICULTY                                                                      |
+    .GameModeType                                               = env.GS_GAME_MODE_TYPE                                                                       |
+    .CastleDamageMode                                           = env.GS_CASTLE_DAMAGE_MODE                                                                   |
+    .SiegeWeaponHealth                                          = env.GS_SIEGE_WEAPON_HEALTH                                                                  |
+    .PlayerDamageMode                                           = env.GS_PLAYER_DAMAGE_MODE                                                                   |
+    .CastleHeartDamageMode                                      = env.GS_CASTLE_HEART_DAMAGE_MODE                                                             |
+    .PvPProtectionMode                                          = env.GS_PVP_PROTECTION_MODE                                                                  |
+    .DeathContainerPermission                                   = env.GS_DEATH_CONTAINER_PERMISSION                                                           |
+    .RelicSpawnType                                             = env.GS_RELIC_SPAWN_TYPE                                                                     |
+    .SoulShard_DurabilityLossRate                               = (env.GS_SOUL_SHARD___DURABILITY_LOSS_RATE                                   | tonumber)     |
+    .CanLootEnemyContainers                                     = (env.GS_CAN_LOOT_ENEMY_CONTAINERS                                           | test("true")) |
+    .BloodBoundEquipment                                        = (env.GS_BLOOD_BOUND_EQUIPMENT                                               | test("true")) |
+    .TeleportBoundItems                                         = (env.GS_TELEPORT_BOUND_ITEMS                                                | test("true")) |
+    .BatBoundItems                                              = (env.GS_BAT_BOUND_ITEMS                                                     | test("true")) |
+    .BatBoundShards                                             = (env.GS_BAT_BOUND_SHARDS                                                    | test("true")) |
+    .AllowGlobalChat                                            = (env.GS_ALLOW_GLOBAL_CHAT                                                   | test("true")) |
+    .AllWaypointsUnlocked                                       = (env.GS_ALL_WAYPOINTS_UNLOCKED                                              | test("true")) |
+    .FreeCastleRaid                                             = (env.GS_FREE_CASTLE_RAID                                                    | test("true")) |
+    .FreeCastleClaim                                            = (env.GS_FREE_CASTLE_CLAIM                                                   | test("true")) |
+    .FreeCastleDestroy                                          = (env.GS_FREE_CASTLE_DESTROY                                                 | test("true")) |
+    .InactivityKillEnabled                                      = (env.GS_INACTIVITY_KILL_ENABLED                                             | test("true")) |
+    .InactivityKillTimeMin                                      = (env.GS_INACTIVITY_KILL_TIME_MIN                                            | tonumber)     |
+    .InactivityKillTimeMax                                      = (env.GS_INACTIVITY_KILL_TIME_MAX                                            | tonumber)     |
+    .InactivityKillSafeTimeAddition                             = (env.GS_INACTIVITY_KILL_SAFE_TIME_ADDITION                                  | tonumber)     |
+    .InactivityKillTimerMaxItemLevel                            = (env.GS_INACTIVITY_KILL_TIMER_MAX_ITEM_LEVEL                                | tonumber)     |
+    .StartingProgressionLevel                                   = (env.GS_STARTING_PROGRESSION_LEVEL                                          | tonumber)     |
+    .DisableDisconnectedDeadEnabled                             = (env.GS_DISABLE_DISCONNECTED_DEAD_ENABLED                                   | test("true")) |
+    .DisableDisconnectedDeadTimer                               = (env.GS_DISABLE_DISCONNECTED_DEAD_TIMER                                     | tonumber)     |
+    .DisconnectedSunImmunityTime                                = (env.GS_DISCONNECTED_SUN_IMMUNITY_TIME                                      | tonumber)     |
+    .InventoryStacksModifier                                    = (env.GS_INVENTORY_STACKS_MODIFIER                                           | tonumber)     |
+    .DropTableModifier_General                                  = (env.GS_DROP_TABLE_MODIFIER___GENERAL                                       | tonumber)     |
+    .DropTableModifier_StygianShards                            = (env.GS_DROP_TABLE_MODIFIER___STYGIAN_SHARDS                                | tonumber)     |
+    .DropTableModifier_Missions                                 = (env.GS_DROP_TABLE_MODIFIER___MISSIONS                                      | tonumber)     |
+    .MaterialYieldModifier_Global                               = (env.GS_MATERIAL_YIELD_MODIFIER___GLOBAL                                    | tonumber)     |
+    .BloodEssenceYieldModifier                                  = (env.GS_BLOOD_ESSENCE_YIELD_MODIFIER                                        | tonumber)     |
+    .JournalVBloodSourceUnitMaxDistance                         = (env.GS_JOURNAL_V___BLOOD_SOURCE_UNIT_MAX_DISTANCE                          | tonumber)     |
+    .PvPVampireRespawnModifier                                  = (env.GS_PVP_VAMPIRE_RESPAWN_MODIFIER                                        | tonumber)     |
+    .CastleMinimumDistanceInFloors                              = (env.GS_CASTLE_MINIMUM_DISTANCE_IN_FLOORS                                   | tonumber)     |
+    .ClanSize                                                   = (env.GS_CLAN_SIZE                                                           | tonumber)     |
+    .BloodDrainModifier                                         = (env.GS_BLOOD_DRAIN_MODIFIER                                                | tonumber)     |
+    .DurabilityDrainModifier                                    = (env.GS_DURABILITY_DRAIN_MODIFIER                                           | tonumber)     |
+    .GarlicAreaStrengthModifier                                 = (env.GS_GARLIC_AREA_STRENGTH_MODIFIER                                       | tonumber)     |
+    .HolyAreaStrengthModifier                                   = (env.GS_HOLY_AREA_STRENGTH_MODIFIER                                         | tonumber)     |
+    .SilverStrengthModifier                                     = (env.GS_SILVER_STRENGTH_MODIFIER                                            | tonumber)     |
+    .SunDamageModifier                                          = (env.GS_SUN_DAMAGE_MODIFIER                                                 | tonumber)     |
+    .CastleDecayRateModifier                                    = (env.GS_CASTLE_DECAY_RATE_MODIFIER                                          | tonumber)     |
+    .CastleBloodEssenceDrainModifier                            = (env.GS_CASTLE_BLOOD_ESSENCE_DRAIN_MODIFIER                                 | tonumber)     |
+    .CastleSiegeTimer                                           = (env.GS_CASTLE_SIEGE_TIMER                                                  | tonumber)     |
+    .CastleUnderAttackTimer                                     = (env.GS_CASTLE_UNDER_ATTACK_TIMER                                           | tonumber)     |
+    .CastleRaidTimer                                            = (env.GS_CASTLE_RAID_TIMER                                                   | tonumber)     |
+    .CastleRaidProtectionTime                                   = (env.GS_CASTLE_RAID_PROTECTION_TIME                                         | tonumber)     |
+    .CastleExposedFreeClaimTimer                                = (env.GS_CASTLE_EXPOSED_FREE_CLAIM_TIMER                                     | tonumber)     |
+    .CastleRelocationCooldown                                   = (env.GS_CASTLE_RELOCATION_COOLDOWN                                          | tonumber)     |
+    .CastleRelocationEnabled                                    = (env.GS_CASTLE_RELOCATION_ENABLED                                           | test("true")) |
+    .AnnounceSiegeWeaponSpawn                                   = (env.GS_ANNOUNCE_SIEGE_WEAPON_SPAWN                                         | test("true")) |
+    .ShowSiegeWeaponMapIcon                                     = (env.GS_SHOW_SIEGE_WEAPON_MAP_ICON                                          | test("true")) |
+    .BuildCostModifier                                          = (env.GS_BUILD_COST_MODIFIER                                                 | tonumber)     |
+    .RecipeCostModifier                                         = (env.GS_RECIPE_COST_MODIFIER                                                | tonumber)     |
+    .CraftRateModifier                                          = (env.GS_CRAFT_RATE_MODIFIER                                                 | tonumber)     |
+    .ResearchCostModifier                                       = (env.GS_RESEARCH_COST_MODIFIER                                              | tonumber)     |
+    .RefinementCostModifier                                     = (env.GS_REFINEMENT_COST_MODIFIER                                            | tonumber)     |
+    .RefinementRateModifier                                     = (env.GS_REFINEMENT_RATE_MODIFIER                                            | tonumber)     |
+    .ResearchTimeModifier                                       = (env.GS_RESEARCH_TIME_MODIFIER                                              | tonumber)     |
+    .DismantleResourceModifier                                  = (env.GS_DISMANTLE_RESOURCE_MODIFIER                                         | tonumber)     |
+    .ServantConvertRateModifier                                 = (env.GS_SERVANT_CONVERT_RATE_MODIFIER                                       | tonumber)     |
+    .RepairCostModifier                                         = (env.GS_REPAIR_COST_MODIFIER                                                | tonumber)     |
+    .Death_DurabilityFactorLoss                                 = (env.GS_DEATH___DURABILITY_FACTOR_LOSS                                      | tonumber)     |
+    .Death_DurabilityLossFactorAsResources                      = (env.GS_DEATH___DURABILITY_LOSS_FACTOR_AS_RESOURCES                         | tonumber)     |
+    .StarterEquipmentId                                         = (env.GS_STARTER_EQUIPMENT_ID                                                | tonumber)     |
+    .StarterResourcesId                                         = (env.GS_STARTER_RESOURCES_ID                                                | tonumber)     |
+    .GameTimeModifiers.DayDurationInSeconds                     = (env.GS_GAME_TIME_MODIFIERS__DAY_DURATION_IN_SECONDS                        | tonumber)     |
+    .GameTimeModifiers.DayStartHour                             = (env.GS_GAME_TIME_MODIFIERS__DAY_START_HOUR                                 | tonumber)     |
+    .GameTimeModifiers.DayStartMinute                           = (env.GS_GAME_TIME_MODIFIERS__DAY_START_MINUTE                               | tonumber)     |
+    .GameTimeModifiers.DayEndHour                               = (env.GS_GAME_TIME_MODIFIERS__DAY_END_HOUR                                   | tonumber)     |
+    .GameTimeModifiers.DayEndMinute                             = (env.GS_GAME_TIME_MODIFIERS__DAY_END_MINUTE                                 | tonumber)     |
+    .GameTimeModifiers.BloodMoonFrequency_Min                   = (env.GS_GAME_TIME_MODIFIERS__BLOOD_MOON_FREQUENCY___MIN                     | tonumber)     |
+    .GameTimeModifiers.BloodMoonFrequency_Max                   = (env.GS_GAME_TIME_MODIFIERS__BLOOD_MOON_FREQUENCY___MAX                     | tonumber)     |
+    .GameTimeModifiers.BloodMoonBuff                            = (env.GS_GAME_TIME_MODIFIERS__BLOOD_MOON_BUFF                                | tonumber)     |
+    .VampireStatModifiers.MaxHealthModifier                     = (env.GS_VAMPIRE_STAT_MODIFIERS__MAX_HEALTH_MODIFIER                         | tonumber)     |
+    .VampireStatModifiers.PhysicalPowerModifier                 = (env.GS_VAMPIRE_STAT_MODIFIERS__PHYSICAL_POWER_MODIFIER                     | tonumber)     |
+    .VampireStatModifiers.SpellPowerModifier                    = (env.GS_VAMPIRE_STAT_MODIFIERS__SPELL_POWER_MODIFIER                        | tonumber)     |
+    .VampireStatModifiers.ResourcePowerModifier                 = (env.GS_VAMPIRE_STAT_MODIFIERS__RESOURCE_POWER_MODIFIER                     | tonumber)     |
+    .VampireStatModifiers.SiegePowerModifier                    = (env.GS_VAMPIRE_STAT_MODIFIERS__SIEGE_POWER_MODIFIER                        | tonumber)     |
+    .VampireStatModifiers.DamageReceivedModifier                = (env.GS_VAMPIRE_STAT_MODIFIERS__DAMAGE_RECEIVED_MODIFIER                    | tonumber)     |
+    .VampireStatModifiers.ReviveCancelDelay                     = (env.GS_VAMPIRE_STAT_MODIFIERS__REVIVE_CANCEL_DELAY                         | tonumber)     |
+    .UnitStatModifiers_Global.MaxHealthModifier                 = (env.GS_UNIT_STAT_MODIFIERS___GLOBAL__MAX_HEALTH_MODIFIER                   | tonumber)     |
+    .UnitStatModifiers_Global.PowerModifier                     = (env.GS_UNIT_STAT_MODIFIERS___GLOBAL__POWER_MODIFIER                        | tonumber)     |
+    .UnitStatModifiers_Global.LevelIncrease                     = (env.GS_UNIT_STAT_MODIFIERS___GLOBAL__LEVEL_INCREASE                        | tonumber)     |
+    .UnitStatModifiers_VBlood.MaxHealthModifier                 = (env.GS_UNIT_STAT_MODIFIERS___V_BLOOD__MAX_HEALTH_MODIFIER                  | tonumber)     |
+    .UnitStatModifiers_VBlood.PowerModifier                     = (env.GS_UNIT_STAT_MODIFIERS___V_BLOOD__POWER_MODIFIER                       | tonumber)     |
+    .UnitStatModifiers_VBlood.LevelIncrease                     = (env.GS_UNIT_STAT_MODIFIERS___V_BLOOD__LEVEL_INCREASE                       | tonumber)     |
+    .EquipmentStatModifiers_Global.MaxHealthModifier            = (env.GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__MAX_HEALTH_MODIFIER              | tonumber)     |
+    .EquipmentStatModifiers_Global.ResourceYieldModifier        = (env.GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__RESOURCE_YIELD_MODIFIER          | tonumber)     |
+    .EquipmentStatModifiers_Global.PhysicalPowerModifier        = (env.GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__PHYSICAL_POWER_MODIFIER          | tonumber)     |
+    .EquipmentStatModifiers_Global.SpellPowerModifier           = (env.GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__SPELL_POWER_MODIFIER             | tonumber)     |
+    .EquipmentStatModifiers_Global.SiegePowerModifier           = (env.GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__SIEGE_POWER_MODIFIER             | tonumber)     |
+    .EquipmentStatModifiers_Global.MovementSpeedModifier        = (env.GS_EQUIPMENT_STAT_MODIFIERS___GLOBAL__MOVEMENT_SPEED_MODIFIER          | tonumber)     |
+    .CastleStatModifiers_Global.TickPeriod                      = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__TICK_PERIOD                         | tonumber)     |
+    .CastleStatModifiers_Global.SafetyBoxLimit                  = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__SAFETY_BOX_LIMIT                    | tonumber)     |
+    .CastleStatModifiers_Global.EyeStructuresLimit              = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__EYE_STRUCTURES_LIMIT                | tonumber)     |
+    .CastleStatModifiers_Global.TombLimit                       = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__TOMB_LIMIT                          | tonumber)     |
+    .CastleStatModifiers_Global.VerminNestLimit                 = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__VERMIN_NEST_LIMIT                   | tonumber)     |
+    .CastleStatModifiers_Global.PrisonCellLimit                 = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__PRISON_CELL_LIMIT                   | tonumber)     |
+    .CastleStatModifiers_Global.CastleHeartLimitType            = env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__CASTLE_HEART_LIMIT_TYPE                              |
+    .CastleStatModifiers_Global.CastleLimit                     = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__CASTLE_LIMIT                        | tonumber)     |
+    .CastleStatModifiers_Global.NetherGateLimit                 = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__NETHER_GATE_LIMIT                   | tonumber)     |
+    .CastleStatModifiers_Global.ThroneOfDarknessLimit           = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__THRONE_OF_DARKNESS_LIMIT            | tonumber)     |
+    .CastleStatModifiers_Global.ArenaStationLimit               = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__ARENA_STATION_LIMIT                 | tonumber)     |
+    .CastleStatModifiers_Global.RoutingStationLimit             = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__ROUTING_STATION_LIMIT               | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level1.FloorLimit   = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__FLOOR_LIMIT   | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level1.ServantLimit = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__SERVANT_LIMIT | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level1.HeightLimit  = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL1__HEIGHT_LIMIT  | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level2.FloorLimit   = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__FLOOR_LIMIT   | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level2.ServantLimit = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__SERVANT_LIMIT | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level2.HeightLimit  = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL2__HEIGHT_LIMIT  | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level3.FloorLimit   = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__FLOOR_LIMIT   | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level3.ServantLimit = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__SERVANT_LIMIT | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level3.HeightLimit  = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL3__HEIGHT_LIMIT  | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level4.FloorLimit   = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__FLOOR_LIMIT   | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level4.ServantLimit = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__SERVANT_LIMIT | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level4.HeightLimit  = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL4__HEIGHT_LIMIT  | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level5.FloorLimit   = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__FLOOR_LIMIT   | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level5.ServantLimit = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__SERVANT_LIMIT | tonumber)     |
+    .CastleStatModifiers_Global.HeartLimits.Level5.HeightLimit  = (env.GS_CASTLE_STAT_MODIFIERS___GLOBAL__HEART_LIMITS__LEVEL5__HEIGHT_LIMIT  | tonumber)     |
+    .PlayerInteractionSettings.TimeZone                         = env.GS_PLAYER_INTERACTION_SETTINGS__TIME_ZONE                                               |
+    .PlayerInteractionSettings.VSPlayerWeekdayTime.StartHour    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__START_HOUR     | tonumber)     |
+    .PlayerInteractionSettings.VSPlayerWeekdayTime.StartMinute  = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__START_MINUTE   | tonumber)     |
+    .PlayerInteractionSettings.VSPlayerWeekdayTime.EndHour      = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__END_HOUR       | tonumber)     |
+    .PlayerInteractionSettings.VSPlayerWeekdayTime.EndMinute    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKDAY_TIME__END_MINUTE     | tonumber)     |
+    .PlayerInteractionSettings.VSPlayerWeekendTime.StartHour    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__START_HOUR     | tonumber)     |
+    .PlayerInteractionSettings.VSPlayerWeekendTime.StartMinute  = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__START_MINUTE   | tonumber)     |
+    .PlayerInteractionSettings.VSPlayerWeekendTime.EndHour      = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__END_HOUR       | tonumber)     |
+    .PlayerInteractionSettings.VSPlayerWeekendTime.EndMinute    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_PLAYER_WEEKEND_TIME__END_MINUTE     | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekdayTime.StartHour    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__START_HOUR     | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekdayTime.StartMinute  = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__START_MINUTE   | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekdayTime.EndHour      = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__END_HOUR       | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekdayTime.EndMinute    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKDAY_TIME__END_MINUTE     | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekendTime.StartHour    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__START_HOUR     | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekendTime.StartMinute  = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__START_MINUTE   | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekendTime.EndHour      = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__END_HOUR       | tonumber)     |
+    .PlayerInteractionSettings.VSCastleWeekendTime.EndMinute    = (env.GS_PLAYER_INTERACTION_SETTINGS__VS_CASTLE_WEEKEND_TIME__END_MINUTE     | tonumber)     |
+    .TraderModifiers.StockModifier                              = (env.GS_TRADER_MODIFIERS__STOCK_MODIFIER                                    | tonumber)     |
+    .TraderModifiers.PriceModifier                              = (env.GS_TRADER_MODIFIERS__PRICE_MODIFIER                                    | tonumber)     |
+    .TraderModifiers.RestockTimerModifier                       = (env.GS_TRADER_MODIFIERS__RESTOCK_TIMER_MODIFIER                            | tonumber)     |
+    .WarEventGameSettings.Interval                              = (env.GS_WAR_EVENT_GAME_SETTINGS__INTERVAL                                   | tonumber)     |
+    .WarEventGameSettings.MajorDuration                         = (env.GS_WAR_EVENT_GAME_SETTINGS__MAJOR_DURATION                             | tonumber)     |
+    .WarEventGameSettings.MinorDuration                         = (env.GS_WAR_EVENT_GAME_SETTINGS__MINOR_DURATION                             | tonumber)     |
+    .WarEventGameSettings.WeekdayTime.StartHour                 = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__START_HOUR                   | tonumber)     |
+    .WarEventGameSettings.WeekdayTime.StartMinute               = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__START_MINUTE                 | tonumber)     |
+    .WarEventGameSettings.WeekdayTime.EndHour                   = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__END_HOUR                     | tonumber)     |
+    .WarEventGameSettings.WeekdayTime.EndMinute                 = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKDAY_TIME__END_MINUTE                   | tonumber)     |
+    .WarEventGameSettings.WeekendTime.StartHour                 = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__START_HOUR                   | tonumber)     |
+    .WarEventGameSettings.WeekendTime.StartMinute               = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__START_MINUTE                 | tonumber)     |
+    .WarEventGameSettings.WeekendTime.EndHour                   = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__END_HOUR                     | tonumber)     |
+    .WarEventGameSettings.WeekendTime.EndMinute                 = (env.GS_WAR_EVENT_GAME_SETTINGS__WEEKEND_TIME__END_MINUTE                   | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers1.PointsModifier        = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS1__POINTS_MODIFIER          | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers1.DropModifier          = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS1__DROP_MODIFIER            | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers2.PointsModifier        = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS2__POINTS_MODIFIER          | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers2.DropModifier          = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS2__DROP_MODIFIER            | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers3.PointsModifier        = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS3__POINTS_MODIFIER          | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers3.DropModifier          = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS3__DROP_MODIFIER            | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers4.PointsModifier        = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS4__POINTS_MODIFIER          | tonumber)     |
+    .WarEventGameSettings.ScalingPlayers4.DropModifier          = (env.GS_WAR_EVENT_GAME_SETTINGS__SCALING_PLAYERS4__DROP_MODIFIER            | tonumber)' \
+  <"${STEAMAPPSERVER}/VRisingServer_Data/StreamingAssets/Settings/ServerGameSettings.json" \
+  >"${gameconfig_file}"
 
 ExitCode=$?
 
-# Normally jq exits with 2 if there was any usage problem or system error, 
+# Normally jq exits with 2 if there was any usage problem or system error,
 # 3 if there was a jq program compile error, or 0 if the jq program ran.
 if [ $ExitCode -eq 0 ]; then
-    LogSuccess "Compiling ServerGameSettings.json done!"
+  LogSuccess "Compiling ServerGameSettings.json done!"
 fi
 
 exit $ExitCode

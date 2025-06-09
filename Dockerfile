@@ -1,46 +1,46 @@
-FROM diyagi/steamcmd-wine:root-noble as base-steamcmd-wine
-
-LABEL maintainer="github@diyagi.dev" \
-      name="diyagi/vrising-server-docker" \
-      github="https://github.com/Diyagi/vrising-server-docker" \
-      dockerhub="https://hub.docker.com/r/diyagi/vrising-server-docker/" \
-      org.opencontainers.image.authors="Diyagi" \
-      org.opencontainers.image.source="https://github.com/Diyagi/vrising-server-docker"
+FROM diyagi/steamcmd-wine:root-noble AS base-steamcmd-wine
 
 ARG DEBIAN_FRONTEND="noninteractive"
-RUN apt-get update -y \
-    && apt-get install -y --no-install-recommends --no-install-suggests \
-    tzdata \
-    jq=1.7.1-3build1 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
-# set args
-# SUPERCRONIC: Latest releases available at https://github.com/aptible/supercronic/releases
-# RCON: Latest releases available at https://github.com/gorcon/rcon-cli/releases
+ARG JO_VERSION="1.9-1"
+ARG JQ_VERSION="1.7.1-3build1"
+ARG TZDATA_VERSION="2025b-0ubuntu0.24.04.1"
+ARG VIM_VERSION="2:9.1.0016-1ubuntu7.8"
 ARG GORCON_VERSION="0.10.3"
-ARG GORCON_MD5SUM="8601c70dcab2f90cd842c127f700e398"
-ARG SUPERCRONIC_VERSION="0.2.29"    
-ARG SUPERCRONIC_SHA1SUM="cd48d45c4b10f3f0bfdd3a57d054cd05ac96812b"
+ARG GORCON_CHECKSUM="6962a641ebf9a5957bd0cda1b8acf3e34a23686ae709f6c6a14ac3898521a5cc"
+ARG SUPERCRONIC_VERSION="0.2.33"
+ARG SUPERCRONIC_CHECKSUM="feefa310da569c81b99e1027b86b27b51e6ee9ab647747b49099645120cfc671"
 
-# Install GoRcon
-RUN curl -fsSL -o rconcli.tar.gz https://github.com/gorcon/rcon-cli/releases/download/v${GORCON_VERSION}/rcon-${GORCON_VERSION}-amd64_linux.tar.gz \
-    && echo "${GORCON_MD5SUM}" rconcli.tar.gz | md5sum -c - \
-    && tar -xf rconcli.tar.gz --strip-components=1 --transform 's/rcon/rcon-cli/g' -C /usr/bin/ rcon-${GORCON_VERSION}-amd64_linux/rcon
+ADD --checksum=sha256:${GORCON_CHECKSUM}  \
+    https://github.com/gorcon/rcon-cli/releases/download/v${GORCON_VERSION}/rcon-${GORCON_VERSION}-amd64_linux.tar.gz \
+    /tmp/rconcli.tar.gz
 
-# Install Supercronic
-RUN curl -fsSL -o supercronic https://github.com/aptible/supercronic/releases/download/v${SUPERCRONIC_VERSION}/supercronic-linux-amd64 \
-    && echo "${SUPERCRONIC_SHA1SUM}" supercronic | sha1sum -c - \
-    && chmod +x supercronic \
-    && mv supercronic /usr/local/bin/supercronic
+ADD --checksum=sha256:${SUPERCRONIC_CHECKSUM} \
+    https://github.com/aptible/supercronic/releases/download/v${SUPERCRONIC_VERSION}/supercronic-linux-amd64 \
+    /usr/local/bin/supercronic
 
-ENV STEAMAPP vrising
-ENV STEAMAPPDIR "/${STEAMAPP}"
-ENV STEAMAPPSERVER "${STEAMAPPDIR}/server"
-ENV STEAMAPPDATA "${STEAMAPPDIR}/data"
-ENV LOGSDIR "${STEAMAPPDATA}/logs"
-ENV SCRIPTSDIR "${STEAMAPPDIR}/scripts"
-ENV ANNOUNCEDIR "${STEAMAPPDIR}/announce"
+RUN apt-get update -y && \
+    apt-get install -y --no-install-recommends \
+        jo=${JO_VERSION} \
+        jq=${JQ_VERSION} \
+        tzdata=${TZDATA_VERSION} \
+        vim=${VIM_VERSION} && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    tar -xf /tmp/rconcli.tar.gz \
+        --strip-components=1 \
+        --transform='s/rcon/rcon-cli/' \
+        -C /usr/bin/ \
+        rcon-${GORCON_VERSION}-amd64_linux/rcon && \
+    rm /tmp/rconcli.tar.gz && \
+    chmod +x /usr/local/bin/supercronic
+
+ENV STEAMAPP=vrising
+ENV STEAMAPPDIR="/${STEAMAPP}"
+ENV STEAMAPPSERVER="${STEAMAPPDIR}/server"
+ENV STEAMAPPDATA="${STEAMAPPDIR}/data"
+ENV LOGSDIR="${STEAMAPPDATA}/logs"
+ENV SCRIPTSDIR="${STEAMAPPDIR}/scripts"
+ENV ANNOUNCEDIR="${STEAMAPPDIR}/announce"
 
 ENV PUID=1000 \
     PGID=1000 \
@@ -57,54 +57,19 @@ ENV PUID=1000 \
     AUTO_REBOOT_WARN_MESSAGE="Server will restart in ~{t} min. Reason: Scheduled Restart" \
     AUTO_ANNOUNCE_ENABLED=false \
     AUTO_ANNOUNCE_CRON_EXPRESSION="*/10 * * * *" \
-    FALLBACK_PORT=9878 \
-    MIN_FREE_SLOTS_FOR_NEW_USERS=0 \
-    AI_UPDATES_PER_FRAME=200 \
-    SERVER_BRANCH="" \
-    COMPRESS_SAVE_FILES=true \
-    RUN_PERSISTENCE_TESTS_ON_SAVE=false \
-    DUMP_PERSISTENCE_SUMMARY_ON_SAVE=false \
-    STORE_PERSISTENCE_DEBUG_DATA=false \
-    GIVE_STARTER_ITEMS=false \
-    LOG_ALL_NETWORK_EVENTS=false \
-    LOG_ADMIN_EVENTS=true \
-    LOG_DEBUG_EVENTS=true \
-    ADMIN_ONLY_DEBUG_EVENTS=true \
-    EVERYONE_IS_ADMIN=false \
-    DISABLE_DEBUG_EVENTS=false \
-    ENABLE_DANGEROUS_DEBUG_EVENTS=false \
-    TRACK_ARCHETYPE_CREATIONS_ON_STARTUP=false \
-    SERVER_START_TIME_OFFSET=0.0 \
-    PERSISTENCE_VERSION_OVERRIDE=-1 \
-    USE_TELEPORT_PLAYERS_OUT_OF_COLLISION_FIX=true \
-    REMOTE_BANS_URL="" \
-    REMOTE_ADMINS_URL="" \
-    AFK_KICK_TYPE=0 \
-    AFK_KICK_DURATION=1 \
-    AFK_KICK_WARNING_DURATION=14 \
-    AFK_KICK_PLAYER_RATIO=0.5 \
-    ENABLE_BACKTRACE_ANR=false \
-    ANALYTICS_ENABLED=true \
-    ANALYTICS_ENVIRONMENT="prod" \
-    ANALYTICS_DEBUG=false \
-    USE_DOUBLE_TRANSPORT_LAYER=true \
-    PRIVATE_GAME=false \
-    API_ENABLED=false \
-    API_ADDRESS="*" \
-    API_PORT=9090 \
-    API_BASE_PATH="/" \
-    API_ACCESS_LIST="" \
-    API_PROMETHEUS_DELAY=30 \
-    RCON_TIMEOUT_SECONDS=300 \
-    RCON_MAX_PASSWORD_TRIES=99 \
-    RCON_BAN_MINUTES=0 \
-    RCON_SEND_AUTH_IMMEDIATELY=true \
-    RCON_MAX_CONNECTIONS_PER_IP=20 \
-    RCON_MAX_CONNECTIONS=20 \
-    RCON_EXPERIMENTAL_COMMANDS_ENABLED=false \
-    GAME_DIFFICULTY="Normal" \
-    GAMEMODE_TYPE="PvP" \
-    CLAN_SIZE=4
+    DISCORD_SUPPRESS_NOTIFICATIONS="" \
+    DISCORD_WEBHOOK_URL="" \
+    DISCORD_CONNECT_TIMEOUT=30 \
+    DISCORD_MAX_TIMEOUT=30 \
+    DISCORD_PRE_START_MESSAGE="Server has been started!" \
+    DISCORD_PRE_START_MESSAGE_URL="" \
+    DISCORD_PRE_START_MESSAGE_ENABLED=true \
+    DISCORD_PRE_SHUTDOWN_MESSAGE="Server is shutting down..." \
+    DISCORD_PRE_SHUTDOWN_MESSAGE_URL="" \
+    DISCORD_PRE_SHUTDOWN_MESSAGE_ENABLED=true \
+    DISCORD_POST_SHUTDOWN_MESSAGE="Server has been stopped!" \
+    DISCORD_POST_SHUTDOWN_MESSAGE_URL="" \
+    DISCORD_POST_SHUTDOWN_MESSAGE_ENABLED=true
 
 
 # Build directories

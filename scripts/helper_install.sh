@@ -29,6 +29,7 @@ UpdateRequired() {
 
   if [ "$http_code" -ne 200 ]; then
       LogError "There was a problem reaching the Steam api. Unable to check for updates!"
+      DiscordMessage "Install" "There was a problem reaching the Steam api. Unable to check for updates!" "failure"
       rm "$temp_file"
       return 2
   fi
@@ -39,6 +40,7 @@ UpdateRequired() {
 
   if [ -z "$LATEST_MANIFEST" ]; then
       LogError "The server response does not contain the expected BuildID. Unable to check for updates!"
+      DiscordMessage "Install" "Steam servers response does not contain the expected BuildID. Unable to check for updates!" "failure"
       return 2
   fi
 
