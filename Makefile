@@ -18,7 +18,7 @@ ifeq ("$(wildcard $(OFFIMG_LOCAL_CLONE))","")
 	$(GIT) clone $(OFFIMG_REPO_URL) $(OFFIMG_LOCAL_CLONE)
 endif
 
-test: test-prepare
+test: test-prepare build
 	$(OFFIMG_LOCAL_CLONE)/test/run.sh -c $(OFFIMG_LOCAL_CLONE)/test/config.sh $(REPO_NAME)/$(IMAGE_NAME):latest
 
 .PHONY: build test-prepare test all
