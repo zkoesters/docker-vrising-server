@@ -30,7 +30,7 @@ elif [[ "$(id -u)" -eq 0 ]] || [[ "$(id -g)" -eq 0 ]]; then
 fi
 
 if ! [ -w "${STEAMAPPSERVER}" ]; then
-    LogError "${STEAMAPPSERVER}r is not writable."
+    LogError "${STEAMAPPSERVER} is not writable."
     exit 1
 fi
 

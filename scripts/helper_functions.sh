@@ -81,6 +81,19 @@ RCON() {
   rcon-cli -c "${SCRIPTSDIR}/rcon.yaml" "$args"
 }
 
+broadcast_command() {
+    local return_val=0
+    # Replaces spaces with underscore
+    local message="${1// /_}"
+    if [[ $TEXT = *[![:ascii:]]* ]]; then
+        LogWarn "Unable to broadcast since the message contains non-ascii characters: \"${message}\""
+        return_val=1
+    elif ! RCON "broadcast ${message}" > /dev/null; then
+        return_val=1
+    fi
+    return "$return_val"
+}
+
 #
 # Log Definitions
 #
@@ -117,6 +130,22 @@ Log() {
   printf "$color%s$RESET$LINE" "$prefix$message$suffix"
 }
 
+# Send Discord Message
+# Level is optional variable defaulting to info
+DiscordMessage() {
+  local title="$1"
+  local message="$2"
+  local level="$3"
+  local enabled="$4"
+  local webhook_url="$5"
+  if [ -z "$level" ]; then
+    level="info"
+  fi
+  if [ -n "${DISCORD_WEBHOOK_URL}" ]; then
+    "${SCRIPTSDIR}"/discord.sh "$title" "$message" "$level" "$enabled" "$webhook_url" &
+  fi
+}
+
 #
 # Some functions to add color to outputs
 # using IFS=''preserves whitespace
@@ -138,7 +167,7 @@ LogCleanOutput() {
 }
 
 # Try to parse RCON access info
-# Returns 0 if the parse sucsucceeded
+# Returns 0 if the parse succeeded
 # Returns 1 if the parse failed or rcon is disabled
 ParseRCONAccess() {
     local host_settings_file="${STEAMAPPDATA}/Settings/ServerHostSettings.json"
