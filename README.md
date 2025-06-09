@@ -12,7 +12,7 @@ A Docker container for hosting your own dedicated server using Ubuntu 24.04 and 
 
 ## Getting Started
 
-Follow this [docker-compose-yml](/docker-compose.yml) example and check [environment variables](#container-environment-variables) below for more information.
+Follow this [docker-compose-yml](/deploy/docker/compose/docker-compose.yml) example and check [environment variables](#container-environment-variables) below for more information.
 
 ```yaml
 services:
