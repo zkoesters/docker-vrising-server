@@ -1,5 +1,5 @@
 REPO_NAME  ?= zkoesters
-IMAGE_NAME ?= vrising
+IMAGE_NAME ?= vrising-server
 
 DOCKER=docker
 GIT=git

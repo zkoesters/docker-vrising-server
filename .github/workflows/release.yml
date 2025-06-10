@@ -6,7 +6,7 @@ on:
       - "Dockerfile"
       - "scripts/**"
 env:
-  IMAGE_NAME: zkoesters/vrising
+  IMAGE_NAME: zkoesters/vrising-server
 jobs:
   release:
     name: Release Image
