@@ -10,8 +10,8 @@ OFFIMG_REPO_URL=https://github.com/docker-library/official-images.git
 all: build test
 
 build:
-	$(DOCKER) build --pull --no-cache -t $(REPO_NAME)/$(IMAGE_NAME):latest -f Dockerfile .
-	$(DOCKER) images                     $(REPO_NAME)/$(IMAGE_NAME):latest
+	$(DOCKER) build -t $(REPO_NAME)/$(IMAGE_NAME):latest -f Dockerfile .
+	$(DOCKER) images   $(REPO_NAME)/$(IMAGE_NAME):latest
 
 test-prepare:
 ifeq ("$(wildcard $(OFFIMG_LOCAL_CLONE))","")
