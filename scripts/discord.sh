@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck source=scripts/helper_functions.sh
+# shellcheck source=helper_functions.sh
 source "${SCRIPTSDIR}/helper_functions.sh"
 
 # Defaults
@@ -21,57 +21,57 @@ ENABLED=$4
 URL=$5
 
 if [ "$DISCORD_SUPPRESS_NOTIFICATIONS" = true ]; then
-    DISCORD_FLAGS=4096
+  DISCORD_FLAGS=4096
 fi
 
 if [ -n "${DISCORD_CONNECT_TIMEOUT}" ] && [[ "${DISCORD_CONNECT_TIMEOUT}" =~ ^[0-9]+$ ]]; then
-    CONNECT_TIMEOUT=$DISCORD_CONNECT_TIMEOUT
+  CONNECT_TIMEOUT=$DISCORD_CONNECT_TIMEOUT
 else
-    LogWarn "CONNECT_TIMEOUT is not an integer, using default ${DEFAULT_CONNECT_TIMEOUT} seconds."
-    CONNECT_TIMEOUT=$DEFAULT_CONNECT_TIMEOUT
+  LogWarn "CONNECT_TIMEOUT is not an integer, using default ${DEFAULT_CONNECT_TIMEOUT} seconds."
+  CONNECT_TIMEOUT=$DEFAULT_CONNECT_TIMEOUT
 fi
 
 if [ -n "${DISCORD_MAX_TIMEOUT}" ] && [[ "${DISCORD_MAX_TIMEOUT}" =~ ^[0-9]+$ ]]; then
-    MAX_TIMEOUT=$DISCORD_MAX_TIMEOUT
+  MAX_TIMEOUT=$DISCORD_MAX_TIMEOUT
 else
-    LogWarn "MAX_TIMEOUT is not an integer, using default ${DEFAULT_MAX_TIMEOUT} seconds."
-    MAX_TIMEOUT=$DEFAULT_MAX_TIMEOUT
+  LogWarn "MAX_TIMEOUT is not an integer, using default ${DEFAULT_MAX_TIMEOUT} seconds."
+  MAX_TIMEOUT=$DEFAULT_MAX_TIMEOUT
 fi
 
 if [ -n "${LEVEL}" ]; then
-    case $LEVEL in
-        info )
-            COLOR=$DISCORD_BLUE
-            ;;
-        in-progress )
-            COLOR=$DISCORD_YELLOW
-            ;;
-        warn )
-            COLOR=$DISCORD_ORANGE
-            ;;
-        failure )
-            COLOR=$DISCORD_RED
-            ;;
-        success )
-            COLOR=$DISCORD_GREEN
-            ;;
-        * )
-            LogWarn "Could not find \"${LEVEL}\", using \"${DEFAULT_LEVEL}\""
-            COLOR=$DISCORD_BLUE
-            ;;
-    esac
-else
+  case $LEVEL in
+  info)
     COLOR=$DISCORD_BLUE
+    ;;
+  in-progress)
+    COLOR=$DISCORD_YELLOW
+    ;;
+  warn)
+    COLOR=$DISCORD_ORANGE
+    ;;
+  failure)
+    COLOR=$DISCORD_RED
+    ;;
+  success)
+    COLOR=$DISCORD_GREEN
+    ;;
+  *)
+    LogWarn "Could not find \"${LEVEL}\", using \"${DEFAULT_LEVEL}\""
+    COLOR=$DISCORD_BLUE
+    ;;
+  esac
+else
+  COLOR=$DISCORD_BLUE
 fi
 
 JSON=$(jo embeds[]="$(jo title="$TITLE" description="$MESSAGE" color=$COLOR)" flags="$DISCORD_FLAGS")
 
 if [ "$ENABLED" = true ]; then
-    if [ "$URL" == "" ]; then
-        DISCORD_URL="$DISCORD_WEBHOOK_URL"
-    else
-        DISCORD_URL="$URL"
-    fi
-    LogInfo "Sending Discord json: ${JSON}"
-    curl -sfSL --connect-timeout "$CONNECT_TIMEOUT" --max-time "$MAX_TIMEOUT" -H "Content-Type: application/json" -d "$JSON" "$DISCORD_URL"
+  if [ "$URL" == "" ]; then
+    DISCORD_URL="$DISCORD_WEBHOOK_URL"
+  else
+    DISCORD_URL="$URL"
+  fi
+  LogInfo "Sending Discord json: ${JSON}"
+  curl -sfSL --connect-timeout "$CONNECT_TIMEOUT" --max-time "$MAX_TIMEOUT" -H "Content-Type: application/json" -d "$JSON" "$DISCORD_URL"
 fi

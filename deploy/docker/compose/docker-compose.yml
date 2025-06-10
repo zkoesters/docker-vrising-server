@@ -21,6 +21,6 @@ services:
       VR_LIST_ON_STEAM: true
       VR_SAVE_NAME: "dockerWorld"
     volumes:
-    - ./awesome-vrising-server/server:/vrising/server
-    - ./awesome-vrising-server/data:/vrising/data
-    - ./awesome-vrising-server/announce:/vrising/announce # Only needed if you are using Auto Announce
+      - ./awesome-vrising-server/server:/vrising/server
+      - ./awesome-vrising-server/data:/vrising/data
+      - ./awesome-vrising-server/announce:/vrising/announce # Only needed if you are using Auto Announce

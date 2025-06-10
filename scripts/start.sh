@@ -1,8 +1,8 @@
 #!/bin/bash
-# shellcheck source=scripts/helper_functions.sh
+# shellcheck source=helper_functions.sh
 source "${SCRIPTSDIR}/helper_functions.sh"
 
-# shellcheck source=scripts/helper_functions.sh
+# shellcheck source=helper_functions.sh
 source "${SCRIPTSDIR}/helper_install.sh"
 
 dirExists "${STEAMAPPSERVER}" || exit
@@ -14,26 +14,26 @@ cd "${STEAMAPPSERVER}" || exit
 IsAVXSupported
 AVXSupport=$?
 if [ "$AVXSupport" == 1 ]; then
-    LogError "AVX is required but not supported on this hardware."
-    exit
+  LogError "AVX is required but not supported on this hardware."
+  exit
 fi
 
 IsInstalled
 ServerInstalled=$?
 if [ "$ServerInstalled" == 1 ]; then
-    LogInfo "Server installation not detected."
-    LogAction "Starting Installation"
-    InstallServer
+  LogInfo "Server installation not detected."
+  LogAction "Starting Installation"
+  InstallServer
 fi
 
 # Update Only If Already Installed
 if [ "$ServerInstalled" == 0 ] && [ "${UPDATE_ON_BOOT,,}" == true ]; then
-    UpdateRequired
-    IsUpdateRequired=$?
-    if [ "$IsUpdateRequired" == 0 ]; then
-        LogAction "Starting Update"
-        InstallServer
-    fi
+  UpdateRequired
+  IsUpdateRequired=$?
+  if [ "$IsUpdateRequired" == 0 ]; then
+    LogAction "Starting Update"
+    InstallServer
+  fi
 fi
 
 if [ "${COMPILE_HOST_SETTINGS,,}" = false ]; then
@@ -64,33 +64,32 @@ if [ "$RCON_ENABLED" == 1 ]; then
 fi
 
 LogAction "GENERATING CRONTAB"
-truncate -s 0  "${SCRIPTSDIR}/crontab"
+truncate -s 0 "${SCRIPTSDIR}/crontab"
 
 if [ "${AUTO_UPDATE_ENABLED,,}" = true ] && [ "${UPDATE_ON_BOOT}" = true ]; then
-    LogInfo "Adding cronjob for auto updating"
-    echo "$AUTO_UPDATE_CRON_EXPRESSION bash ${SCRIPTSDIR}/update.sh" >> "${SCRIPTSDIR}/crontab"
-    supercronic -quiet -test "${SCRIPTSDIR}/crontab" || exit
+  LogInfo "Adding cronjob for auto updating"
+  echo "$AUTO_UPDATE_CRON_EXPRESSION bash ${SCRIPTSDIR}/update.sh" >>"${SCRIPTSDIR}/crontab"
+  supercronic -quiet -test "${SCRIPTSDIR}/crontab" || exit
 fi
 
 if [ "${AUTO_REBOOT_ENABLED,,}" = true ]; then
-    LogInfo "Adding cronjob for auto rebooting"
-    echo "$AUTO_REBOOT_CRON_EXPRESSION bash ${SCRIPTSDIR}/auto_reboot.sh" >> "${SCRIPTSDIR}/crontab"
-    supercronic -quiet -test "${SCRIPTSDIR}/crontab" || exit
+  LogInfo "Adding cronjob for auto rebooting"
+  echo "$AUTO_REBOOT_CRON_EXPRESSION bash ${SCRIPTSDIR}/auto_reboot.sh" >>"${SCRIPTSDIR}/crontab"
+  supercronic -quiet -test "${SCRIPTSDIR}/crontab" || exit
 fi
 
 if [ "${AUTO_ANNOUNCE_ENABLED,,}" = true ]; then
-    LogInfo "Adding cronjob for auto announce"
-    echo "$AUTO_ANNOUNCE_CRON_EXPRESSION bash ${SCRIPTSDIR}/auto_announce.sh" >> "${SCRIPTSDIR}/crontab"
-    supercronic -quiet -test "${SCRIPTSDIR}/crontab" || exit
+  LogInfo "Adding cronjob for auto announce"
+  echo "$AUTO_ANNOUNCE_CRON_EXPRESSION bash ${SCRIPTSDIR}/auto_announce.sh" >>"${SCRIPTSDIR}/crontab"
+  supercronic -quiet -test "${SCRIPTSDIR}/crontab" || exit
 fi
 
 if [ -s "${SCRIPTSDIR}/crontab" ]; then
-    supercronic -passthrough-logs "${SCRIPTSDIR}/crontab" &
-    LogInfo "Cronjobs started"
+  supercronic -passthrough-logs "${SCRIPTSDIR}/crontab" &
+  LogInfo "Cronjobs started"
 else
-    LogInfo "No Cronjobs found"
+  LogInfo "No Cronjobs found"
 fi
-
 
 LogAction "Starting Server"
 DiscordMessage "Start" "${DISCORD_PRE_START_MESSAGE}" "success" "${DISCORD_PRE_START_MESSAGE_ENABLED}" "${DISCORD_PRE_START_MESSAGE_URL}"
