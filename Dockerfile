@@ -1,10 +1,6 @@
-FROM diyagi/steamcmd-wine:root-noble AS base-steamcmd-wine
+FROM zkoesters/steamcmd:bookworm-wine-root@sha256:5cce65acfdc841189d43281530e90b633276b1b2d13198dcc9c2b77c6180d0b4 AS base-steamcmd-wine
 
 ARG DEBIAN_FRONTEND="noninteractive"
-ARG JO_VERSION="1.9-1"
-ARG JQ_VERSION="1.7.1-3build1"
-ARG TZDATA_VERSION="2025b-0ubuntu0.24.04.1"
-ARG VIM_VERSION="2:9.1.0016-1ubuntu7.8"
 ARG GORCON_VERSION="0.10.3"
 ARG GORCON_CHECKSUM="6962a641ebf9a5957bd0cda1b8acf3e34a23686ae709f6c6a14ac3898521a5cc"
 ARG SUPERCRONIC_VERSION="0.2.33"
@@ -18,21 +14,21 @@ ADD --checksum=sha256:${SUPERCRONIC_CHECKSUM} \
     https://github.com/aptible/supercronic/releases/download/v${SUPERCRONIC_VERSION}/supercronic-linux-amd64 \
     /usr/local/bin/supercronic
 
-RUN apt-get update -y && \
-    apt-get install -y --no-install-recommends \
-        jo=${JO_VERSION} \
-        jq=${JQ_VERSION} \
-        tzdata=${TZDATA_VERSION} \
-        vim=${VIM_VERSION} && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    tar -xf /tmp/rconcli.tar.gz \
+RUN apt-get update -y \
+    && apt-get install -y --no-install-suggests --no-install-recommends \
+        curl=7.88.1-10+deb12u12 \
+        jo=1.9-1 \
+        jq=1.6-2.1 \
+        tzdata=2025b-0+deb12u1 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && tar -xf /tmp/rconcli.tar.gz \
         --strip-components=1 \
         --transform='s/rcon/rcon-cli/' \
         -C /usr/bin/ \
-        rcon-${GORCON_VERSION}-amd64_linux/rcon && \
-    rm /tmp/rconcli.tar.gz && \
-    chmod +x /usr/local/bin/supercronic
+        rcon-${GORCON_VERSION}-amd64_linux/rcon \
+    && rm /tmp/rconcli.tar.gz \
+    && chmod +x /usr/local/bin/supercronic
 
 ENV STEAMAPP=vrising
 ENV STEAMAPPDIR="/${STEAMAPP}"
@@ -44,6 +40,7 @@ ENV ANNOUNCEDIR="${STEAMAPPDIR}/announce"
 
 ENV PUID=1000 \
     PGID=1000 \
+    WINEARCH=win64 \
     COMPILE_HOST_SETTINGS=false \
     COMPILE_GAME_SETTINGS=false \
     UPDATE_ON_BOOT=true \
