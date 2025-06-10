@@ -1,7 +1,7 @@
 #!/bin/bash
 
 IsInstalled() {
-  if  [ -e "${STEAMAPPSERVER}/VRisingServer.exe" ] && [ -e "${STEAMAPPSERVER}/steamapps/appmanifest_1829350.acf" ]; then
+  if [ -e "${STEAMAPPSERVER}/VRisingServer.exe" ] && [ -e "${STEAMAPPSERVER}/steamapps/appmanifest_1829350.acf" ]; then
     return 0
   fi
   return 1
@@ -10,8 +10,8 @@ IsInstalled() {
 # Returns 0 if AVX is supported
 # Returns 1 if AVX is not supported
 IsAVXSupported() {
-    grep -q -o 'avx[^ ]*' /proc/cpuinfo
-    return $?
+  grep -q -o 'avx[^ ]*' /proc/cpuinfo
+  return $?
 }
 
 # Returns 0 if Update Required
@@ -28,10 +28,10 @@ UpdateRequired() {
   http_code=$(curl https://api.steamcmd.net/v1/info/1829350 --output "$temp_file" --silent --location --write-out "%{http_code}")
 
   if [ "$http_code" -ne 200 ]; then
-      LogError "There was a problem reaching the Steam api. Unable to check for updates!"
-      DiscordMessage "Install" "There was a problem reaching the Steam api. Unable to check for updates!" "failure"
-      rm "$temp_file"
-      return 2
+    LogError "There was a problem reaching the Steam api. Unable to check for updates!"
+    DiscordMessage "Install" "There was a problem reaching the Steam api. Unable to check for updates!" "failure"
+    rm "$temp_file"
+    return 2
   fi
 
   # Parse temp file for manifest id
@@ -39,9 +39,9 @@ UpdateRequired() {
   rm "$temp_file"
 
   if [ -z "$LATEST_MANIFEST" ]; then
-      LogError "The server response does not contain the expected BuildID. Unable to check for updates!"
-      DiscordMessage "Install" "Steam servers response does not contain the expected BuildID. Unable to check for updates!" "failure"
-      return 2
+    LogError "The server response does not contain the expected BuildID. Unable to check for updates!"
+    DiscordMessage "Install" "Steam servers response does not contain the expected BuildID. Unable to check for updates!" "failure"
+    return 2
   fi
 
   # Parse current manifest from steam files
@@ -63,5 +63,5 @@ UpdateRequired() {
 }
 
 InstallServer() {
-    /home/steam/steamcmd/steamcmd.sh +@sSteamCmdForcePlatformType windows +@sSteamCmdForcePlatformBitness 64 +force_install_dir "${STEAMAPPSERVER}" +login anonymous +app_update 1829350 validate +quit
+  /home/steam/steamcmd/steamcmd.sh +@sSteamCmdForcePlatformType windows +@sSteamCmdForcePlatformBitness 64 +force_install_dir "${STEAMAPPSERVER}" +login anonymous +app_update 1829350 validate +quit
 }

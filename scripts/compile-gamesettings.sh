@@ -1,5 +1,5 @@
 #!/bin/bash
-# shellcheck source=scripts/helper_functions.sh
+# shellcheck source=helper_functions.sh
 source "$SCRIPTSDIR/helper_functions.sh"
 
 gameconfig_file="$STEAMAPPDATA/Settings/ServerGameSettings.json"

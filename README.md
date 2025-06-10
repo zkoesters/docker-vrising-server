@@ -1,83 +1,85 @@
-# docker-vrising
+# docker-vrising-server
 
->[!NOTE]
-> This image features ✨**gracefully server shutdown**✨, meaning you should not experience rollbacks after an shutdown/restart.
+> [!NOTE]
+> This image features ✨**gracefully server shutdown**✨, meaning you should not experience rollbacks after an
+> shutdown/restart.
 <br>
-A Docker container for hosting your own dedicated server using Ubuntu 24.04 and WineHQ 9.
+> A Docker container for hosting your own dedicated server using Debian 12 and WineHQ 10.
 <br>
 
 ## Acknowledgements
- - Base image from [CM2Walki/steamcmd](https://github.com/CM2Walki/steamcmd)
- - Code from [palworld-server-docker](https://github.com/thijsvanloef/palworld-server-docker)
+
+- Base image from [CM2Walki/steamcmd](https://github.com/CM2Walki/steamcmd)
+- Code from [palworld-server-docker](https://github.com/thijsvanloef/palworld-server-docker)
 
 ## Getting Started
 
-Follow this [docker-compose-yml](/deploy/docker/compose/docker-compose.yml) example and check [environment variables](#container-environment-variables) below for more information.
+Follow this [docker-compose-yml](/deploy/docker/compose/docker-compose.yml) example and
+check [environment variables](#container-environment-variables) below for more information.
 
 ```yaml
 services:
-  vrising:
-    image: zkoesters/docker-vrising:latest
-    restart: unless-stopped # Required for the restarts to work
-    stop_grace_period: 15s # Might need to increase with longer saves
-    ports:
-      - 9876:9876/udp
-      - 9877:9877/udp
-    environment:
-      TZ: "America/Los_Angeles"
-      PUID: 1001
-      PGID: 1001
-      VR_NAME: "V Rising Docker Server"
-      VR_DESCRIPTION: "V Rising server hosted on Docker"
-      VR_RCON_ENABLED: true
-      VR_RCON_PASSWORD: "rconPassword"
-      VR_RCON_PORT: 25575
-      VR_GAME_PORT: 9876
-      VR_QUERY_PORT: 9877
-      VR_LIST_ON_EOS: true
-      VR_LIST_ON_STEAM: true
-      VR_SAVE_NAME: "dockerWorld"
-    volumes:
-    - ./awesome-vrising-server/server:/vrising/server
-    - ./awesome-vrising-server/data:/vrising/data
-    - ./awesome-vrising-server/announce:/vrising/announce # Only needed if you are using Auto Announce
-
+    vrising:
+        image: zkoesters/vrising:latest
+        restart: unless-stopped # Required for the restarts to work
+        stop_grace_period: 15s # Might need to increase with longer saves
+        ports:
+            - "9876:9876/udp"
+            - "9877:9877/udp"
+        environment:
+            TZ: "America/Los_Angeles"
+            PUID: 1001
+            PGID: 1001
+            VR_NAME: "V Rising Docker Server"
+            VR_DESCRIPTION: "V Rising server hosted on Docker"
+            VR_RCON_ENABLED: true
+            VR_RCON_PASSWORD: "rconPassword"
+            VR_RCON_PORT: 25575
+            VR_GAME_PORT: 9876
+            VR_QUERY_PORT: 9877
+            VR_LIST_ON_EOS: true
+            VR_LIST_ON_STEAM: true
+            VR_SAVE_NAME: "dockerWorld"
+        volumes:
+            - ./awesome-vrising-server/server:/vrising/server
+            - ./awesome-vrising-server/data:/vrising/data
+            - ./awesome-vrising-server/announce:/vrising/announce # Only needed if you are using Auto Announce
 ```
 
->[!TIP]
-> To manually change the `ServerGameSettings.json` and/or `ServerHostSettings.json` you need to set `COMPILE_GAME_SETTINGS` and/or `COMPILE_HOST_SETTINGS` to `false`.
+> [!TIP]
+> To manually change the `ServerGameSettings.json` and/or `ServerHostSettings.json` you need to set
+`COMPILE_GAME_SETTINGS` and/or `COMPILE_HOST_SETTINGS` to `false`.
 >
-> When setting `COMPILE_GAME_SETTINGS` or `COMPILE_HOST_SETTINGS` to `true` you are expected to use environment variables to configure the server without touching `ServerGameSettings.json` and/or `ServerHostSettings.json`
+> When setting `COMPILE_GAME_SETTINGS` or `COMPILE_HOST_SETTINGS` to `true` you are expected to use environment
+> variables to configure the server without touching `ServerGameSettings.json` and/or `ServerHostSettings.json`
 
 ## Container Environment Variables
 
-| Variable                        | Type/Default                                                 | Description                                                                                                                                                                                        |
-|:--------------------------------|--------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `PUID`                          | `1000`                                                       | UID used by the container to run the server as                                                                                                                                                     |
-| `PGID`                          | `1000`                                                       | GID used by the container to run the server as                                                                                                                                                     |
-| `TZ`                            | `Europe/Brussels`                                            | Timezone, important if you are running Cron tasks.                                                                                                                                                 |
-| `UPDATE_ON_BOOT`                | `true`                                                       | Checks for updates on start and updates it if needed                                                                                                                                               |
-| `COMPILE_HOST_SETTINGS`         | `false`                                                      | Disable the generation of `ServerHostSettings.json` using the env vars below. It does not affect the env vars starting with `VR_`, these env vars are used by the gameserver itself                |
-| `COMPILE_GAME_SETTINGS`         | `false`                                                      | Disable the generation of `ServerGameSettings.json` using the env vars.                                                                                                                            |
-| `AUTO_UPDATE_ENABLED`           | `false`                                                      | Enable/Disables Auto Update.<br>If docker restart is not set to policy `always` or `unless-stopped` then the server will shutdown and will need to be manually restarted.<br>**Requires RCON**     |
-| `AUTO_UPDATE_CRON_EXPRESSION`   | `0 * * * *`                                                  | Cron expression to when to run the update check.                                                                                                                                                   |
-| `AUTO_UPDATE_WARN_MINUTES`      | `30,15,10,5,3,2,1`                                           | How many minutes until restart and announce intervals.<br>Example: `30,15,10,5,3,2,1` will shutdown the server in `30` minutes and announce the shut down at `30,15,10,5,3,2` and `1` minute mark. |
-| `AUTO_UPDATE_WARN_MESSAGE`      | `Server will restart in ~{t} min. Reason: Scheduled Update`  | Message used to announce the restart.<br>`~{t}` will be replaced in the message by the remaining time until shutdown.                                                                              |
-| `AUTO_REBOOT_ENABLED`           | `false`                                                      | Enable/Disable Auto Reboot.<br>If docker restart is not set to policy `always` or `unless-stopped` then the server will shutdown and will need to be manually restarted.<br>**Requires RCON**      |
-| `AUTO_REBOOT_CRON_EXPRESSION`   | `0 0 * * *`                                                  | Cron expression to when to run the reboot.                                                                                                                                                         |
-| `AUTO_REBOOT_WARN_MINUTES`      | `15,10,5,3,2,1`                                              | How many minutes until restart and announce intervals.<br>Example: `30,15,10,5,3,2,1` will shutdown the server in `30` minutes and announce the shut down at `30,15,10,5,3,2` and `1` minute mark. |
-| `AUTO_REBOOT_WARN_MESSAGE`      | `Server will restart in ~{t} min. Reason: Scheduled Restart` | Message used to announce the restart.<br>`~{t}` will be replaced in the message by the remaining time until shutdown                                                                               |
-| `AUTO_ANNOUNCE_ENABLED`         | `false`                                                      | Enable/Disable Auto Announce of messages.                                                                                                                                                          |
-| `AUTO_ANNOUNCE_CRON_EXPRESSION` | `*/10 * * * *`                                               | Cron expression to when to announce messages.<br>Default is every 10 minutes.<br>**Requires RCON**                                                                                                 |
-
-
+| Variable                        | Type/Default   | Description                                                                                                                                                                                    |
+|:--------------------------------|----------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `PUID`                          | `1000`         | UID used by the container to run the server as                                                                                                                                                 |
+| `PGID`                          | `1000`         | GID used by the container to run the server as                                                                                                                                                 |
+| `TZ`                            | `UTC`          | Timezone, important if you are running Cron tasks.                                                                                                                                             |
+| `UPDATE_ON_BOOT`                | `true`         | Checks for updates on start and updates it if needed                                                                                                                                           |
+| `COMPILE_HOST_SETTINGS`         | `false`        | Disable the generation of `ServerHostSettings.json` using the env vars below. It does not affect the env vars starting with `VR_`, these env vars are used by the gameserver itself            |
+| `COMPILE_GAME_SETTINGS`         | `false`        | Disable the generation of `ServerGameSettings.json` using the env vars.                                                                                                                        |
+| `AUTO_UPDATE_ENABLED`           | `false`        | Enable/Disables Auto Update.<br>If docker restart is not set to policy `always` or `unless-stopped` then the server will shutdown and will need to be manually restarted.<br>**Requires RCON** |
+| `AUTO_UPDATE_CRON_EXPRESSION`   | `0 * * * *`    | Cron expression to when to run the update check.                                                                                                                                               |
+| `AUTO_UPDATE_WARN_MINUTES`      | `30`           | How long to wait to update the server, after the player were informed.                                                                                                                         |
+| `AUTO_REBOOT_ENABLED`           | `false`        | Enable/Disable Auto Reboot.<br>If docker restart is not set to policy `always` or `unless-stopped` then the server will shutdown and will need to be manually restarted.<br>**Requires RCON**  |
+| `AUTO_REBOOT_CRON_EXPRESSION`   | `0 0 * * *`    | Cron expression to when to run the reboot.                                                                                                                                                     |
+| `AUTO_REBOOT_WARN_MINUTES`      | `30`           | How long to wait to reboot the server, after the player were informed.                                                                                                                         |
+| `AUTO_ANNOUNCE_ENABLED`         | `false`        | Enable/Disable Auto Announce of messages.                                                                                                                                                      |
+| `AUTO_ANNOUNCE_CRON_EXPRESSION` | `*/10 * * * *` | Cron expression to when to announce messages.<br>Default is every 10 minutes.<br>**Requires RCON**                                                                                             |
 
 ## Host Settings Environment Variables (Game Server)
 
->[!IMPORTANT]
+> [!IMPORTANT]
 > `VR_` prefixed environment variables are used by the **game** server itself, not added by the container.
 >
-> Because these are read by the game server itself, setting `COMPILE_HOST_SETTINGS` to `false` won't affect how these environment variables work. [Official Doc](https://github.com/StunlockStudios/vrising-dedicated-server-instructions/blob/master/1.0.x/INSTRUCTIONS.md#server-host-settings).
+> Because these are read by the game server itself, setting `COMPILE_HOST_SETTINGS` to `false` won't affect how these
+> environment variables
+> work. [Official Doc](https://github.com/StunlockStudios/vrising-dedicated-server-instructions/blob/master/1.0.x/INSTRUCTIONS.md#server-host-settings).
 >
 > These environment variables will **override** their respective values in `ServerHostSettings.json`.
 
@@ -112,14 +114,17 @@ services:
 | `VR_RCON_PASSWORD`              | `text`                                                                                                                          | Password to access RCON.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | `VR_RCON_BIND_ADDRESS`          | `text`                                                                                                                          | Binds RCON socket to specified address. Will override the "global" Address setting, if you want to bind to a separate internal interface for instance.                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 
-# Host Settings Environment Variables 
+# Host Settings Environment Variables
 
->[!IMPORTANT]
-> The environment variables below are added by the container, when using any of these they will **overwrite** what's in the `ServerHostSettings.json` file.
+> [!IMPORTANT]
+> The environment variables below are added by the container, when using any of these they will **overwrite** what's in
+> the `ServerHostSettings.json` file.
 >
-> When using these environment variables any configuration manually made to `ServerHostSettings.json` will be **overwritten**, meaning you should only use environment variables to configure `ServerHostSettings.json`.
+> When using these environment variables any configuration manually made to `ServerHostSettings.json` will be *
+*overwritten**, meaning you should only use environment variables to configure `ServerHostSettings.json`.
 >
-> If you want to **manually** change the `ServerHostSettings.json` file set `COMPILE_HOST_SETTINGS` to `false`, this will disable all environment variables below.
+> If you want to **manually** change the `ServerHostSettings.json` file set `COMPILE_HOST_SETTINGS` to `false`, this
+> will disable all environment variables below.
 
 | Variable                                    | Type/Default | Description |
 |:--------------------------------------------|:-------------|:------------|
@@ -171,19 +176,21 @@ services:
 
 # Game Settings Environment Variables
 
->[!IMPORTANT]
-> The environment variables below are added by the container, when using any of these they will **overwrite** what's in the `ServerGameSettings.json` file.
+> [!IMPORTANT]
+> The environment variables below are added by the container, when using any of these they will **overwrite** what's in
+> the `ServerGameSettings.json` file.
 >
-> When using these environment variables any configuration manually made to `ServerGameSettings.json` will be **overwritten**, meaning you should only use environment variables to configure `ServerGameSettings.json`.
+> When using these environment variables any configuration manually made to `ServerGameSettings.json` will be *
+*overwritten**, meaning you should only use environment variables to configure `ServerGameSettings.json`.
 >
-> If you want to **manually** change the `ServerGameSettings.json` file set `COMPILE_GAME_SETTINGS` to `false`, this will disable all environment variables below.
+> If you want to **manually** change the `ServerGameSettings.json` file set `COMPILE_GAME_SETTINGS` to `false`, this
+> will disable all environment variables below.
 
 
->[!NOTE]
+> [!NOTE]
 > Not everything in `ServerGameSettings.json` can be configured using environment variables.
 >
 > If you need anything that's not covered feel free to open an Issue or PR.
-
 
 | Variable                                                        | Type / Default            | Description                                           |
 |:----------------------------------------------------------------|:--------------------------|:------------------------------------------------------|
@@ -297,10 +304,12 @@ services:
 
 ## RCON Commands
 
->[!WARNING]
-> RCON will only work if it's properly configured, either by setting it's environment variables (`VR_RCON_ENABLED`, `VR_RCON_PORT` and `VR_RCON_PASSWORD`) or by manually configuring it in the `ServerHostSettings.json` file.
+> [!WARNING]
+> RCON will only work if it's properly configured, either by setting it's environment variables (`VR_RCON_ENABLED`,
+`VR_RCON_PORT` and `VR_RCON_PASSWORD`) or by manually configuring it in the `ServerHostSettings.json` file.
 
 To use RCON you can use docker exec:
+
 ```bash
 docker exec -it container-name rcon-cli "<command> <value>"
 ```
@@ -322,25 +331,32 @@ If you need external RCON access, remember to expose it's port in the container.
 
 ## Auto Announce
 
->[!IMPORTANT]
->This requires RCON to be enabled !
+> [!IMPORTANT]
+> This requires RCON to be enabled !
 
-Auto Announce works by reading text files with the extension `.announce`, each file is one message and the Auto Announce will rotate through each file in a loop.
+Auto Announce works by reading text files with the extension `.announce`, each file is one message and the Auto Announce
+will rotate through each file in a loop.
 <br>The folder containing the `.announce` files must be mounted inside the container to the path `/vrising/announce`.
-<br>The time between each message can be configured using cron expression with the environment variable `AUTO_ANNOUNCE_CRON_EXPRESSION`.
+<br>The time between each message can be configured using cron expression with the environment variable
+`AUTO_ANNOUNCE_CRON_EXPRESSION`.
 
 It is recommended to follow this pattern to name the `.announce` files:
 <br>`00-something.announce` `01-something.announce`
-<br>The first 2 numbers will dictate the order of the message, meaning `00` will be the first message to be displayed and after the amount of time set with `AUTO_ANNOUNCE_CRON_EXPRESSION` the message `01` will be displayed.
+<br>The first 2 numbers will dictate the order of the message, meaning `00` will be the first message to be displayed
+and after the amount of time set with `AUTO_ANNOUNCE_CRON_EXPRESSION` the message `01` will be displayed.
 <br>You can replace `something` in the file name with anything that helps you identify the message inside it.
 
->[!IMPORTANT]
->Announces are limited to 510 characters, this is a limit imposed by the game.
+> [!IMPORTANT]
+> Announces are limited to 510 characters, this is a limit imposed by the game.
 
-After mounting the `announce` folder with the messages, you can test each message by running the following command with the message number as the parameter (like `00` or `01`) while the server is running:
+After mounting the `announce` folder with the messages, you can test each message by running the following command with
+the message number as the parameter (like `00` or `01`) while the server is running:
+
 ```bash
 docker exec -it container-name testannounce <message number>
 ```
 
-Messages can be modified while the server is running, but the cron expression (`AUTO_ANNOUNCE_CRON_EXPRESSION`) requires a restart to apply.
-<br>More info about message formatting for the announcements (like colors!) [here](https://github.com/Diyagi/vrising-server-docker/wiki/Formatting-announce-messages).
+Messages can be modified while the server is running, but the cron expression (`AUTO_ANNOUNCE_CRON_EXPRESSION`) requires
+a restart to apply.
+<br>More info about message formatting for the announcements (like
+colors!) [here](https://github.com/Diyagi/vrising-server-docker/wiki/Formatting-announce-messages).
