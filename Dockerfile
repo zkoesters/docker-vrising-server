@@ -1,42 +1,10 @@
-FROM zkoesters/steamcmd:bookworm-wine-root@sha256:5cce65acfdc841189d43281530e90b633276b1b2d13198dcc9c2b77c6180d0b4 AS base-steamcmd-wine
+FROM zkoesters/steamcmd:bookworm-wine-root@sha256:5173ff86e05d9aa382387195fced4216b4cb12013a7e91d71ee6eca008bf32ed
 
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG GORCON_VERSION="0.10.3"
 ARG GORCON_CHECKSUM="6962a641ebf9a5957bd0cda1b8acf3e34a23686ae709f6c6a14ac3898521a5cc"
 ARG SUPERCRONIC_VERSION="0.2.33"
 ARG SUPERCRONIC_CHECKSUM="feefa310da569c81b99e1027b86b27b51e6ee9ab647747b49099645120cfc671"
-
-ADD --checksum=sha256:${GORCON_CHECKSUM}  \
-    https://github.com/gorcon/rcon-cli/releases/download/v${GORCON_VERSION}/rcon-${GORCON_VERSION}-amd64_linux.tar.gz \
-    /tmp/rconcli.tar.gz
-
-ADD --checksum=sha256:${SUPERCRONIC_CHECKSUM} \
-    https://github.com/aptible/supercronic/releases/download/v${SUPERCRONIC_VERSION}/supercronic-linux-amd64 \
-    /usr/local/bin/supercronic
-
-RUN apt-get update -y \
-    && apt-get install -y --no-install-suggests --no-install-recommends \
-        curl=7.88.1-10+deb12u12 \
-        jo=1.9-1 \
-        jq=1.6-2.1 \
-        tzdata=2025b-0+deb12u1 \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* \
-    && tar -xf /tmp/rconcli.tar.gz \
-        --strip-components=1 \
-        --transform='s/rcon/rcon-cli/' \
-        -C /usr/bin/ \
-        rcon-${GORCON_VERSION}-amd64_linux/rcon \
-    && rm /tmp/rconcli.tar.gz \
-    && chmod +x /usr/local/bin/supercronic
-
-ENV STEAMAPP=vrising
-ENV STEAMAPPDIR="/${STEAMAPP}"
-ENV STEAMAPPSERVER="${STEAMAPPDIR}/server"
-ENV STEAMAPPDATA="${STEAMAPPDIR}/data"
-ENV LOGSDIR="${STEAMAPPDATA}/logs"
-ENV SCRIPTSDIR="${STEAMAPPDIR}/scripts"
-ENV ANNOUNCEDIR="${STEAMAPPDIR}/announce"
 
 ENV PUID=1000 \
     PGID=1000 \
@@ -64,22 +32,52 @@ ENV PUID=1000 \
     DISCORD_PRE_SHUTDOWN_MESSAGE_ENABLED=true \
     DISCORD_POST_SHUTDOWN_MESSAGE="Server has been stopped!" \
     DISCORD_POST_SHUTDOWN_MESSAGE_URL="" \
-    DISCORD_POST_SHUTDOWN_MESSAGE_ENABLED=true
+    DISCORD_POST_SHUTDOWN_MESSAGE_ENABLED=true \
+    STEAMAPP=vrising
 
+ENV STEAMAPPDIR="/${STEAMAPP}"
 
-# Build directories
-RUN mkdir ${STEAMAPPDIR} ${STEAMAPPSERVER} ${STEAMAPPDATA} ${SCRIPTSDIR} ${ANNOUNCEDIR}
+ENV STEAMAPPSERVER="${STEAMAPPDIR}/server" \
+    STEAMAPPDATA="${STEAMAPPDIR}/data" \
+    SCRIPTSDIR="${STEAMAPPDIR}/scripts" \
+    ANNOUNCEDIR="${STEAMAPPDIR}/announce"
+
+ENV LOGSDIR="${STEAMAPPDATA}/logs"
+
+ADD --checksum=sha256:${GORCON_CHECKSUM}  \
+    https://github.com/gorcon/rcon-cli/releases/download/v${GORCON_VERSION}/rcon-${GORCON_VERSION}-amd64_linux.tar.gz \
+    /tmp/rconcli.tar.gz
+
+ADD --checksum=sha256:${SUPERCRONIC_CHECKSUM} \
+    https://github.com/aptible/supercronic/releases/download/v${SUPERCRONIC_VERSION}/supercronic-linux-amd64 \
+    /usr/local/bin/supercronic
 
 COPY ./scripts ${SCRIPTSDIR}
 
-WORKDIR ${SCRIPTSDIR}
-
-RUN touch ${SCRIPTSDIR}/rcon.yaml \
+RUN apt-get update -y \
+    && apt-get install -y --no-install-suggests --no-install-recommends \
+        curl=7.88.1-10+deb12u12 \
+        jo=1.9-1 \
+        jq=1.6-2.1 \
+        tzdata=2025b-0+deb12u1 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && tar -xf /tmp/rconcli.tar.gz \
+        --strip-components=1 \
+        --transform='s/rcon/rcon-cli/' \
+        -C /usr/bin/ \
+        rcon-${GORCON_VERSION}-amd64_linux/rcon \
+    && rm /tmp/rconcli.tar.gz \
+    && chmod +x /usr/local/bin/supercronic \
+    && mkdir ${STEAMAPPSERVER} ${STEAMAPPDATA} ${ANNOUNCEDIR} \
+    && touch ${SCRIPTSDIR}/rcon.yaml \
     && chown steam:steam -R ${STEAMAPPDIR} \
     && chmod +x ${SCRIPTSDIR}/*.sh \
     && mv ${SCRIPTSDIR}/testannounce.sh /usr/local/bin/testannounce \
     && mkdir /tmp/.X11-unix \
     && chmod 1777 /tmp/.X11-unix \
     && chown root /tmp/.X11-unix
+
+WORKDIR ${SCRIPTSDIR}
 
 CMD ["/vrising/scripts/init.sh"]
