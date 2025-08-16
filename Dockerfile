@@ -1,4 +1,4 @@
-FROM zkoesters/steamcmd:bookworm-wine-root@sha256:2dad32141371ca80daf14d7abe6aa6f2203368f74a32e850a2b54d1aed08abe1
+FROM zkoesters/steamcmd:bookworm-wine-root@sha256:d36cc78a23b268e7093e77593f0e0a145d506e7768ce62caa18efb960476b7d1
 
 ARG DEBIAN_FRONTEND="noninteractive"
 ARG GORCON_VERSION="0.10.3"
